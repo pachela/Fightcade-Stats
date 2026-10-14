@@ -1,0 +1,388 @@
+#fightcade-stats-extension-button-host {
+  all: initial !important;
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  z-index: 2147483647 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  transform: none !important;
+}
+
+.fc-stats-panel {
+  position: fixed !important;
+  top: 24px !important;
+  right: 24px !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 2147483646 !important;
+  display: none;
+  width: 980px !important;
+  height: 820px !important;
+  min-width: 430px !important;
+  min-height: 320px !important;
+  max-width: 95vw !important;
+  max-height: 95vh !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  color: #f6eaf4 !important;
+  background: #29172b !important;
+  border: 1px solid #704067 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.65) !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.fc-stats-panel.visible {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.fc-stats-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex: 0 0 auto !important;
+  padding: 20px 24px !important;
+  color: #f6eaf4 !important;
+  background: #351a32 !important;
+  border-bottom: 1px solid #704067 !important;
+  cursor: move !important;
+  touch-action: none !important;
+  user-select: none !important;
+}
+
+.fc-stats-header button {
+  cursor: pointer !important;
+}
+
+.fc-stats-title {
+  color: #ffffff !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+}
+
+.fc-stats-subtitle {
+  margin-top: 5px !important;
+  color: #d493c4 !important;
+  font-size: 13px !important;
+}
+
+.fc-stats-header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.fc-open-tab,
+.fc-stats-close {
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border: 1px solid #9f5489 !important;
+  border-radius: 5px !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  font-size: 21px !important;
+  line-height: 30px !important;
+  text-align: center !important;
+}
+
+.fc-open-tab:hover,
+.fc-stats-close:hover {
+  background: #552943 !important;
+}
+
+.fc-stats-progress {
+  flex: 0 0 auto !important;
+  padding: 10px 24px !important;
+  color: #e5a8d4 !important;
+  background: #241425 !important;
+  border-bottom: 1px solid #542c4d !important;
+  font-size: 13px !important;
+}
+
+.fc-stats-content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 22px 24px 32px !important;
+  color: #f6eaf4 !important;
+}
+
+.fc-stats-cards {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin-bottom: 18px !important;
+}
+
+.fc-stat-card {
+  min-height: 76px !important;
+  padding: 13px !important;
+  color: #f6eaf4 !important;
+  background: #3a1e37 !important;
+  border: 1px solid #704067 !important;
+  border-radius: 6px !important;
+}
+
+.fc-stat-card.positive {
+  border-color: #2ec8b6 !important;
+}
+
+.fc-stat-card.negative {
+  border-color: #a95077 !important;
+}
+
+.fc-stat-card span {
+  display: block !important;
+  color: #d493c4 !important;
+  font-size: 12px !important;
+}
+
+.fc-stat-card strong {
+  display: block !important;
+  margin-top: 8px !important;
+  color: #ffffff !important;
+  font-size: 22px !important;
+}
+
+.fc-stats-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-bottom: 24px !important;
+}
+
+.fc-stats-actions button {
+  padding: 9px 12px !important;
+  color: #ffffff !important;
+  background: #4d2346 !important;
+  border: 1px solid #98517f !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+}
+
+.fc-stats-actions button:hover {
+  background: #68315c !important;
+}
+
+.fc-stats-actions button[data-action="stop"] {
+  color: #ffffff !important;
+  background: #9f294c !important;
+  border-color: #ef789a !important;
+  font-weight: 700 !important;
+}
+
+.fc-stats-actions button[data-action="stop"]:hover {
+  background: #c7355e !important;
+}
+
+.fc-stats-actions button[data-action="stop"]:disabled {
+  opacity: 0.65 !important;
+  cursor: default !important;
+}
+
+.fc-stats-section {
+  margin-top: 25px !important;
+  color: #f6eaf4 !important;
+}
+
+.fc-stats-section h3 {
+  margin: 0 0 10px !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+}
+
+.fc-table-wrapper {
+  overflow-x: auto !important;
+  border: 1px solid #704067 !important;
+  border-radius: 5px !important;
+}
+
+.fc-stats-table {
+  width: 100% !important;
+  min-width: 620px !important;
+  border-collapse: collapse !important;
+  color: #f6eaf4 !important;
+  font-size: 12px !important;
+}
+
+.fc-stats-table th,
+.fc-stats-table td {
+  padding: 9px 10px !important;
+  border-bottom: 1px solid #542c4d !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+.fc-stats-table th {
+  color: #ffffff !important;
+  background: #401f3b !important;
+}
+
+.fc-stats-table td {
+  color: #e6c8df !important;
+}
+
+.fc-stats-table tr:hover td {
+  background: #3d2039 !important;
+}
+
+.fc-sortable-header {
+  position: relative !important;
+  padding-right: 24px !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.fc-sortable-header:hover,
+.fc-sortable-header:focus {
+  color: #32e6df !important;
+  background: #542743 !important;
+  outline: none !important;
+}
+
+.fc-sortable-header::after {
+  position: absolute !important;
+  right: 8px !important;
+  color: #9f5489 !important;
+  content: "↕" !important;
+  font-size: 13px !important;
+}
+
+.fc-sortable-header.fc-sort-asc::after {
+  color: #32e6df !important;
+  content: "↑" !important;
+}
+
+.fc-sortable-header.fc-sort-desc::after {
+  color: #32e6df !important;
+  content: "↓" !important;
+}
+
+/*
+ * Estos selectores tienen prioridad sobre los estilos de Fightcade.
+ * Se usan tanto en Rivales más jugados como en Historial por fecha.
+ */
+#fightcade-stats-extension-panel
+  .fc-stats-table
+  td.positive-text {
+  color: #54e1c5 !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+#fightcade-stats-extension-panel
+  .fc-stats-table
+  td.negative-text {
+  color: #ed82aa !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+#fightcade-stats-extension-panel
+  .fc-stats-table
+  td.draw-text {
+  color: #f4c542 !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+.positive-text {
+  color: #54e1c5 !important;
+  font-weight: 700 !important;
+}
+
+.negative-text {
+  color: #ed82aa !important;
+  font-weight: 700 !important;
+}
+
+.draw-text {
+  color: #f4c542 !important;
+  font-weight: 700 !important;
+}
+
+.fc-resize-handle {
+  position: absolute !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 2147483647 !important;
+  display: block !important;
+  width: 36px !important;
+  height: 36px !important;
+  cursor: nwse-resize !important;
+  touch-action: none !important;
+  user-select: none !important;
+}
+
+.fc-resize-handle::before,
+.fc-resize-handle::after {
+  position: absolute !important;
+  right: 6px !important;
+  bottom: 8px !important;
+  display: block !important;
+  width: 20px !important;
+  height: 3px !important;
+  background: #32e6df !important;
+  border-radius: 2px !important;
+  content: "" !important;
+  pointer-events: none !important;
+  transform: rotate(-45deg) !important;
+}
+
+.fc-resize-handle::after {
+  right: 6px !important;
+  bottom: 16px !important;
+  width: 12px !important;
+  background: #98517f !important;
+}
+
+body.fc-panel-moving,
+body.fc-panel-moving * {
+  cursor: move !important;
+  user-select: none !important;
+}
+
+body.fc-panel-resizing,
+body.fc-panel-resizing * {
+  cursor: nwse-resize !important;
+  user-select: none !important;
+}
+
+@media (max-width: 850px) {
+  .fc-stats-panel {
+    top: 10px !important;
+    right: 10px !important;
+    width: calc(100vw - 20px) !important;
+    height: calc(100vh - 20px) !important;
+    min-width: 0 !important;
+  }
+
+  .fc-stats-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .fc-stats-content {
+    padding: 16px !important;
+  }
+
+  .fc-stats-cards {
+    grid-template-columns: 1fr !important;
+  }
+}

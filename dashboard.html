@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    >
+    <title>Fightcade Stats</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+
+  <body>
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <div>
+          <h1>Fightcade Stats</h1>
+          <p id="dashboard-subtitle">
+            Estadísticas de Fightcade
+          </p>
+        </div>
+      </header>
+
+      <section id="dashboard-empty" class="dashboard-empty">
+        No hay estadísticas cargadas.
+      </section>
+
+      <section id="dashboard-content" hidden>
+        <div id="dashboard-cards" class="dashboard-cards"></div>
+
+        <section class="dashboard-section">
+          <h2>Gráficos</h2>
+
+          <div class="charts-grid">
+            <article class="chart-card">
+              <h3>Sets</h3>
+              <canvas id="sets-chart"></canvas>
+            </article>
+
+            <article class="chart-card">
+              <h3>Rounds</h3>
+              <canvas id="rounds-chart"></canvas>
+            </article>
+
+            <article class="chart-card chart-card-wide">
+              <h3>Rivales más jugados</h3>
+              <canvas id="opponents-chart"></canvas>
+            </article>
+
+            <article class="chart-card chart-card-wide">
+              <h3>Rendimiento por juego</h3>
+              <canvas id="games-chart"></canvas>
+            </article>
+
+            <article class="chart-card chart-card-wide">
+              <h3>Win rate por rango rival</h3>
+              <canvas id="ranks-chart"></canvas>
+            </article>
+          </div>
+        </section>
+
+        <section class="dashboard-section">
+          <h2>Rivales más jugados</h2>
+          <div id="dashboard-opponents"></div>
+        </section>
+
+        <section class="dashboard-section">
+          <h2>Win rate por rango rival</h2>
+          <div id="dashboard-ranks"></div>
+        </section>
+
+        <section class="dashboard-section">
+          <h2>Estadísticas por juego</h2>
+          <div id="dashboard-games"></div>
+        </section>
+
+        <section class="dashboard-section">
+          <h2>Historial por fecha</h2>
+          <div id="dashboard-history"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

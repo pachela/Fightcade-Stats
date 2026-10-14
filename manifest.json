@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Fightcade Stats",
+  "version": "1.9.0",
+  "description": "Analiza sets, rounds, rivales y estadísticas de perfiles de Fightcade.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://fightcade.com/*",
+    "https://www.fightcade.com/*",
+    "https://web.fightcade.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://fightcade.com/*",
+        "https://www.fightcade.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Fightcade Stats"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "dashboard.html",
+        "dashboard.js",
+        "dashboard.css",
+        "background.png"
+      ],
+      "matches": [
+        "https://fightcade.com/*",
+        "https://www.fightcade.com/*"
+      ]
+    }
+  ]
+}
