@@ -13,6 +13,11 @@
     "dashboard-subtitle"
   );
 
+  const nameElement = document.getElementById("dashboard-name");
+  const rankElement = document.getElementById("dashboard-rank");
+  const eloElement = document.getElementById("dashboard-elo");
+  const eloProgressElement = document.getElementById("dashboard-elo-progress");
+
   function formatNumber(value) {
     return Number(value || 0).toLocaleString("es-AR");
   }
@@ -287,7 +292,7 @@
                         -
                         ${formatNumber(item.roundsLost)}
                       </td>
-                      <td class="${
+                      <td class="$ {
                         item.lastResult === "Victoria"
                           ? "positive"
                           : item.lastResult === "Derrota"
@@ -418,7 +423,10 @@
       `;
   }
 
-  function renderHistory(stats) {
+  function renderHistory(stats, eloMap) {
+    /*
+     * Ahora la tabla incluye una columna adicional: Δ Elo
+     */
     document.getElementById("dashboard-history")
       .innerHTML = `
         <div class="table-wrapper">
@@ -431,33 +439,40 @@
                 <th>Resultado</th>
                 <th>Rival</th>
                 <th>Estado</th>
+                <th>Δ Elo</th>
               </tr>
             </thead>
 
             <tbody>
               ${(stats.rows || [])
                 .map(
-                  (row) => `
-                    <tr>
-                      <td>${escapeHtml(row.date)}</td>
-                      <td>${escapeHtml(row.game)}</td>
-                      <td>${escapeHtml(row.player)}</td>
-                      <td>
-                        ${row.playerScore} -
-                        ${row.opponentScore}
-                      </td>
-                      <td>${escapeHtml(row.opponent)}</td>
-                      <td class="${
-                        row.isDraw
-                          ? "draw"
-                          : row.wonSet
-                            ? "positive"
-                            : "negative"
-                      }">
-                        ${escapeHtml(row.result)}
-                      </td>
-                    </tr>
-                  `
+                  (row) => {
+                    const key = `${row.date}|${row.opponent}`;
+                    const delta = eloMap && eloMap[key] !== undefined ? eloMap[key] : "-";
+
+                    return `
+                      <tr>
+                        <td>${escapeHtml(row.date)}</td>
+                        <td>${escapeHtml(row.game)}</td>
+                        <td>${escapeHtml(row.player)}</td>
+                        <td>
+                          ${row.playerScore} -
+                          ${row.opponentScore}
+                        </td>
+                        <td>${escapeHtml(row.opponent)}</td>
+                        <td class="${
+                          row.isDraw
+                            ? "draw"
+                            : row.wonSet
+                              ? "positive"
+                              : "negative"
+                        }">
+                          ${escapeHtml(row.result)}
+                        </td>
+                        <td style="text-align:right;font-weight:700;color:${typeof delta==='number'&&delta>0? '#35e0bd': typeof delta==='number'&&delta<0? '#ed789a':'#e6c8df'}">${typeof delta==='number'? (delta>0? `+${delta}`: `${delta}`) : delta}</td>
+                      </tr>
+                    `;
+                  }
                 )
                 .join("")}
             </tbody>
@@ -766,7 +781,36 @@
     });
   }
 
-  function render(stats) {
+  // helper to compute rank name from elo
+  function rankFromElo(elo) {
+    if (elo >= 1900) return 'S';
+    if (elo >= 1600) return 'A';
+    if (elo >= 1300) return 'B';
+    if (elo >= 1000) return 'C';
+    if (elo >= 700) return 'D';
+    if (elo >= 400) return 'E';
+    return 'Sin rango';
+  }
+
+  function nextRankThreshold(elo) {
+    if (elo < 700) return 700;
+    if (elo < 1000) return 1000;
+    if (elo < 1300) return 1300;
+    if (elo < 1600) return 1600;
+    if (elo < 1900) return 1900;
+    return null;
+  }
+
+  function prevRankThreshold(elo) {
+    if (elo >= 1900) return 1600;
+    if (elo >= 1600) return 1300;
+    if (elo >= 1300) return 1000;
+    if (elo >= 1000) return 700;
+    if (elo >= 700) return 400;
+    return null;
+  }
+
+  function render(stats, eloState) {
     if (!stats) {
       emptyElement.hidden = false;
       contentElement.hidden = true;
@@ -781,19 +825,60 @@
         stats.setsPlayed
       )} sets`;
 
+    // render name / rank / elo
+    nameElement.textContent = stats.player;
+
+    if (eloState && typeof eloState.elo === 'number') {
+      eloElement.textContent = `Elo: ${eloState.elo}`;
+      const playerRank = rankFromElo(eloState.elo);
+      rankElement.textContent = playerRank;
+
+      const next = nextRankThreshold(eloState.elo);
+      const prev = prevRankThreshold(eloState.elo);
+
+      let progressText = '';
+      if (next) {
+        progressText += `${next - eloState.elo} puntos para subir a ${rankFromElo(next)}.`;
+      } else {
+        progressText += 'Ya estás en el rango más alto.';
+      }
+
+      if (prev) {
+        progressText += ` ${eloState.elo - prev} puntos para bajar a ${rankFromElo(prev)}.`;
+      }
+
+      eloProgressElement.textContent = progressText;
+    } else {
+      eloElement.textContent = 'Elo: -';
+      rankElement.textContent = '-';
+      eloProgressElement.textContent = '';
+    }
+
     renderCards(stats);
     renderOpponents(stats);
     renderRanks(stats);
     renderGames(stats);
-    renderHistory(stats);
+
+    // build elo map keyed by date|opponent
+    const eloMap = {};
+    if (eloState && Array.isArray(eloState.matches)) {
+      eloState.matches.forEach(m => {
+        const key = `${m.date}|${m.opponent}`;
+        // store delta as number rounded to 2 decimals
+        eloMap[key] = typeof m.delta === 'number' ? Math.round(m.delta*100)/100 : m.delta;
+      });
+    }
+
+    renderHistory(stats, eloMap);
     renderCharts(stats);
     makeAllTablesSortable();
   }
 
-  chrome.storage.local.get(
-    ["fightcadeStatsDashboard"],
-    (result) => {
-      render(result.fightcadeStatsDashboard || null);
-    }
-  );
+  // load both dashboard and elo state
+  chrome.storage.local.get([
+    "fightcadeStatsDashboard",
+    "fightcadeEloState"
+  ], (result) => {
+    render(result.fightcadeStatsDashboard || null, result.fightcadeEloState || null);
+  });
 })();
