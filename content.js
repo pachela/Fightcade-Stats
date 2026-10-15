@@ -1,4 +1,4 @@
-(() => {
+(function() {
   "use strict";
 
   const EXTENSION_ID = "fightcade-stats-extension";
@@ -874,6 +874,89 @@
       generatedAt: new Date().toISOString()
     });
   }
+
+  // --- Elo calculation helpers (new) ---
+  const RANK_TO_ELO = {
+    E: 550,
+    D: 850,
+    C: 1150,
+    B: 1450,
+    A: 1750,
+    S: 2000,
+    "Sin rango": null
+  };
+
+  function rankToElo(rank) {
+    if (!rank) return null;
+    return RANK_TO_ELO[rank] ?? null;
+  }
+
+  function getKFactorElo(elo, gamesPlayed) {
+    if (gamesPlayed < 10) return 20;
+    if (elo < 700) return 34;
+    if (elo < 1000) return 32;
+    if (elo < 1300) return 30;
+    if (elo < 1600) return 28;
+    if (elo < 1900) return 26;
+    return 24;
+  }
+
+  function expectedScore(yourElo, oppElo) {
+    return 1 / (1 + Math.pow(10, (oppElo - yourElo) / 400));
+  }
+
+  function applyEloSingle(yourElo, oppElo, score, gamesPlayed) {
+    const K = getKFactorElo(yourElo, gamesPlayed);
+    const exp = expectedScore(yourElo, oppElo);
+    const delta = K * (score - exp);
+    return {
+      newElo: Math.round(yourElo + delta),
+      delta: Math.round(delta * 100) / 100,
+      K,
+      expected: Math.round(exp * 10000) / 10000
+    };
+  }
+
+  function computeEloFromStats(stats) {
+    const rowsChrono = (stats.rows || []).slice().reverse(); // oldest -> newest
+
+    const state = {
+      elo: 1000,
+      gamesPlayed: 0,
+      matches: []
+    };
+
+    rowsChrono.forEach((row) => {
+      if (row.isDraw) return; // skip draws for Elo adjustments
+
+      const score = row.wonSet ? 1 : 0;
+      let oppElo = rankToElo(row.opponentRank);
+
+      if (oppElo === null || oppElo === undefined) {
+        // If opponent rank unknown, assume opponent at current player's Elo
+        oppElo = state.elo;
+      }
+
+      const res = applyEloSingle(state.elo, oppElo, score, state.gamesPlayed);
+
+      state.matches.push({
+        date: row.date,
+        opponent: row.opponent,
+        opponentRank: row.opponentRank,
+        opponentElo: oppElo,
+        score,
+        delta: res.delta,
+        eloBefore: state.elo,
+        eloAfter: res.newElo
+      });
+
+      state.elo = res.newElo;
+      state.gamesPlayed += 1;
+    });
+
+    return state;
+  }
+  // --- end Elo helpers ---
 
   function getSortValue(cell) {
     const raw = normalize(cell?.innerText);
@@ -1826,10 +1909,7 @@
   }
 
   function csvEscape(value) {
-    return `"${String(value ?? "").replace(
-      /"/g,
-      '""'
-    )}"`;
+    return `"${String(value ?? "").replace(/"/g, '""')}"`;
   }
 
   function exportCsv() {
@@ -2461,9 +2541,19 @@
 
       renderStats(currentStats);
 
+      // Guardar el dashboard usual
       chrome.storage.local.set({
         fightcadeStatsDashboard: currentStats
       });
+
+      // Calcular y guardar el estado de Elo basado en el historial analizado
+      try {
+        const eloState = computeEloFromStats(currentStats);
+        chrome.storage.local.set({ fightcadeEloState: eloState });
+      } catch (err) {
+        console.error('[Fightcade Stats] Error calculando Elo:', err);
+      }
+
     } catch (error) {
       if (!isCancelled(token)) {
         console.error(
